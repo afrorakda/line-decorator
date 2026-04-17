@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <title>Line Decorator - Fridge Combo</title>
     <link rel="apple-touch-icon" href="image_20.png">
     <link rel="icon" type="image/png" href="image_20.png">
@@ -13,10 +15,14 @@
             --accent: #eee;
             --input-bg: #fafafa;
             --radius: 15px;
-            --success: #111;
+            --placeholder: #bbb;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+        }
+
         body {
             margin: 0;
             background-color: var(--bg);
@@ -26,15 +32,44 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            padding: 20px;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .fridge-container { width: 100%; max-width: 420px; text-align: center; }
+        .fridge-container { 
+            width: 100%; 
+            max-width: 400px; 
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
 
-        h1 { font-size: 2rem; margin-bottom: 5px; font-weight: 800; letter-spacing: -1px; }
-        .subtitle { color: #999; font-size: 0.9rem; margin-bottom: 30px; }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
 
-        .main-input-group { position: relative; margin-bottom: 15px; }
+        .title-group { text-align: left; }
+        h1 { font-size: 1.8rem; margin: 0; font-weight: 800; letter-spacing: -1px; }
+        .subtitle { color: #999; font-size: 0.8rem; font-weight: 600; }
+
+        .hub-link {
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--main);
+            background: var(--accent);
+            padding: 8px 12px;
+            border-radius: 10px;
+        }
+
+        .input-group { 
+            position: relative; 
+            margin-bottom: 15px; 
+        }
+
         textarea {
             width: 100%;
             height: 180px;
@@ -42,39 +77,55 @@
             border: 2px solid var(--accent);
             border-radius: var(--radius);
             padding: 15px;
-            font-size: 1rem;
+            padding-right: 45px;
+            font-size: 16px;
             color: var(--main);
             resize: none;
             outline: none;
-            transition: all 0.3s ease;
+            -webkit-appearance: none;
+            -webkit-text-fill-color: var(--main);
+            opacity: 1 !important;
+            transition: border-color 0.2s;
+            font-weight: 500;
+            line-height: 1.5;
         }
-        textarea.decorated { border-color: var(--main); background: #fff; }
+        textarea:focus { border-color: var(--main); }
+        textarea::placeholder { color: var(--placeholder); -webkit-text-fill-color: var(--placeholder); }
 
-        .clear-btn {
-            display: block;
-            text-align: right;
-            font-size: 0.8rem;
-            color: #999;
+        .clr-btn {
+            position: absolute;
+            right: 12px;
+            top: 15px;
+            width: 28px;
+            height: 28px;
+            background: #ddd;
+            color: #666;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
             cursor: pointer;
-            margin-top: 5px;
-            text-decoration: none;
+            z-index: 5;
         }
+        textarea:not(:placeholder-shown) + .clr-btn { display: flex; }
 
         .controls {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         .control-group { text-align: left; }
         .label {
             display: block;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 800;
             color: #888;
             margin-bottom: 5px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
         .decorator-input {
             width: 100%;
@@ -82,22 +133,24 @@
             border: 2px solid var(--accent);
             border-radius: 12px;
             padding: 12px;
-            font-size: 1.1rem;
+            font-size: 1rem;
             color: var(--main);
             outline: none;
+            -webkit-appearance: none;
+            -webkit-text-fill-color: var(--main);
         }
 
         #statusMessage {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #555;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--main);
             height: 20px;
             margin-bottom: 10px;
+            text-align: center;
             opacity: 0;
             transition: opacity 0.3s;
         }
 
-        .button-group { margin: 10px 0 40px; }
         .main-btn {
             width: 100%;
             background: var(--main);
@@ -106,43 +159,67 @@
             padding: 20px;
             border-radius: var(--radius);
             font-size: 1.1rem;
-            font-weight: bold;
+            font-weight: 800;
             cursor: pointer;
-            transition: all 0.2s;
+            -webkit-appearance: none;
         }
         .main-btn:active { transform: scale(0.98); }
-        .main-btn.copied { background: #000; }
 
-        .footer-btns { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 30px; }
+        .footer-btns { 
+            margin-top: auto;
+            padding-top: 40px;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 12px; 
+            margin-bottom: 30px; 
+        }
+
         .kofi-btn, .home-btn {
-            display: inline-flex;
-            align-items: center;
-            padding: 12px 20px;
+            width: 100%;
+            max-width: 250px;
+            padding: 14px;
             border-radius: var(--radius);
-            font-weight: bold;
+            font-weight: 800;
             font-size: 0.9rem;
             text-decoration: none;
+            text-align: center;
+            border: none;
+            cursor: pointer;
         }
-        .kofi-btn { background: var(--main); color: #fff; }
-        .home-btn { background: var(--accent); color: var(--main); border: none; cursor: pointer; }
+        .kofi-btn { background: #fff; color: var(--main); border: 2px solid var(--main); }
+        .home-btn { background: var(--accent); color: var(--main); }
 
-        footer { font-size: 0.75rem; color: #bbb; line-height: 1.6; }
-        footer a { color: #bbb; text-decoration: underline; }
+        footer { 
+            width: 100%;
+            padding-bottom: 20px;
+            text-align: center;
+            font-size: 0.75rem; 
+            color: #bbb; 
+            font-weight: 600;
+            line-height: 1.6; 
+        }
+        footer a { color: inherit; text-decoration: underline; }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: #fff; padding: 30px; border-radius: var(--radius); max-width: 300px; position: relative; text-align: left;}
-        .close-modal { position: absolute; top: 10px; right: 15px; font-size: 1.5rem; cursor: pointer; color: #aaa; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: #fff; padding: 30px; border-radius: var(--radius); width: 85%; max-width: 320px; text-align: center; position: relative; }
+        .close-modal { position: absolute; top: 10px; right: 15px; font-size: 1.5rem; cursor: pointer; color: #aaa; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="fridge-container">
-    <h1>Line Decorator</h1>
-    <p class="subtitle">Instantly frame and embellish your list.</p>
+    <header>
+        <div class="title-group">
+            <h1>Line Decorator</h1>
+            <p class="subtitle">Frame and embellish your list.</p>
+        </div>
+        <a href="https://afrorakda.github.io/" class="hub-link">🏠 Hub</a>
+    </header>
 
-    <div class="main-input-group">
+    <div class="input-group">
         <textarea id="input" placeholder="Paste your lines here..."></textarea>
-        <div id="clear" class="clear-btn">[ CLEAR ALL ]</div>
+        <button id="clear" class="clr-btn">×</button>
     </div>
 
     <div class="controls">
@@ -158,30 +235,25 @@
 
     <div id="statusMessage"></div>
 
-    <div class="button-group">
-        <button class="main-btn" id="decorateBtn">Decorate & Copy</button>
-    </div>
+    <button class="main-btn" id="decorateBtn">Decorate & Copy</button>
 
     <div class="footer-btns">
-        <a href="https://ko-fi.com/afrorakda" target="_blank" class="kofi-btn">
-            <span>🍵</span> Support me on Ko-fi
-        </a>
+        <a href="https://ko-fi.com/afrorakda" target="_blank" class="kofi-btn">☕️Buy me a coffee</a>
         <button class="home-btn" id="homeBtn">Add to Home Screen</button>
     </div>
 
-    <footer>
+    <footer id="dynamicFooter">
         No login / No tracking / No ads / Browser only<br>
-        <a href="#">Privacy Policy</a> / afrorakda © 2026
+        <a href="https://afrorakda.com/privacy/">Privacy Policy</a><br>
+        afrorakda © 2026
     </footer>
 </div>
 
 <div id="modal" class="modal">
     <div class="modal-content">
         <span class="close-modal" id="close">&times;</span>
-        <strong>📱 Install</strong><br><br>
-        <p>Add to your home screen.</p>
-        <p>🍏 iPhone: Safari > Share > Add to Home Screen.</p>
-        <p>🤖 Android: Chrome > Menu > Add to home screen.</p>
+        <h3 style="margin-top:0">📱 Install</h3>
+        <p style="font-size:0.9rem; color:#666">Add to home screen.<br><br>🍏 <b>Safari</b>: Share > Add to Home Screen<br>🤖 <b>Chrome</b>: Menu > Add to home screen</p>
     </div>
 </div>
 
@@ -195,38 +267,35 @@
     const modal = document.getElementById('modal');
 
     decorateBtn.addEventListener('click', () => {
-        const text = input.value;
+        if (!input.value.trim()) return;
+
+        const start = input.selectionStart;
+        const lines = input.value.split('\n');
         const prefix = prefixInput.value;
         const suffix = suffixInput.value;
+        let count = 0;
 
-        if (text) {
-            const lines = text.split('\n');
-            let decoratedCount = 0;
+        const processed = lines.map(line => {
+            if (line.trim() === '') return line;
+            count++;
+            return `${prefix}${line}${suffix}`;
+        }).join('\n');
+
+        input.value = processed;
+        input.setSelectionRange(start, start);
+
+        navigator.clipboard.writeText(processed).then(() => {
+            statusMsg.textContent = `✨ ${count} lines decorated & Copied!`;
+            statusMsg.style.opacity = '1';
             
-            const processed = lines.map(line => {
-                if (line.trim() === '') return line;
-                decoratedCount++;
-                return `${prefix}${line}${suffix}`;
-            }).join('\n');
-
-            // 画面の中身を書き換えて、目で確認できるようにする
-            input.value = processed;
-
-            navigator.clipboard.writeText(processed).then(() => {
-                statusMsg.textContent = `✨ ${decoratedCount} lines decorated!`;
-                statusMsg.style.opacity = '1';
-                input.classList.add('decorated');
-                
-                const originalText = decorateBtn.textContent;
-                decorateBtn.textContent = 'Decorated & Copied! ✓';
-                
-                setTimeout(() => {
-                    decorateBtn.textContent = originalText;
-                    statusMsg.style.opacity = '0';
-                    input.classList.remove('decorated');
-                }, 2000);
-            });
-        }
+            const originalText = decorateBtn.textContent;
+            decorateBtn.textContent = 'Copied!';
+            
+            setTimeout(() => {
+                decorateBtn.textContent = originalText;
+                statusMsg.style.opacity = '0';
+            }, 2000);
+        });
     });
 
     clearBtn.addEventListener('click', () => {
@@ -238,6 +307,19 @@
     document.getElementById('homeBtn').onclick = () => modal.style.display = 'flex';
     document.getElementById('close').onclick = () => modal.style.display = 'none';
     window.onclick = (e) => { if (e.target == modal) modal.style.display = 'none'; };
+
+    async function loadFooter() {
+        try {
+            const res = await fetch('footer.json');
+            if (res.ok) {
+                const data = await res.json();
+                if (data.footerHtml) {
+                    document.getElementById('dynamicFooter').innerHTML = data.footerHtml;
+                }
+            }
+        } catch(e) {}
+    }
+    window.onload = loadFooter;
 </script>
 
 </body>
