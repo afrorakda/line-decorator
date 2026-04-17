@@ -77,7 +77,7 @@
             border: 2px solid var(--accent);
             border-radius: var(--radius);
             padding: 15px;
-            padding-right: 45px;
+            padding-right: 40px;
             font-size: 16px;
             color: var(--main);
             resize: none;
@@ -89,33 +89,42 @@
             font-weight: 500;
             line-height: 1.5;
         }
-        textarea:focus { border-color: var(--main); }
-        textarea::placeholder { color: var(--placeholder); -webkit-text-fill-color: var(--placeholder); }
+        textarea:focus, .decorator-input:focus { border-color: var(--main); }
+        
+        /* 透かし（Placeholder）のコントラスト固定 */
+        ::placeholder { color: var(--placeholder); -webkit-text-fill-color: var(--placeholder); opacity: 1; }
+        :-ms-input-placeholder { color: var(--placeholder); }
+        ::-ms-input-placeholder { color: var(--placeholder); }
 
         .clr-btn {
             position: absolute;
-            right: 12px;
-            top: 15px;
-            width: 28px;
-            height: 28px;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
             background: #ddd;
             color: #666;
             border-radius: 50%;
             display: none;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
             border: none;
             cursor: pointer;
             z-index: 5;
         }
-        textarea:not(:placeholder-shown) + .clr-btn { display: flex; }
+        /* Textarea用の位置調整 */
+        textarea + .clr-btn { top: 27px; }
+        
+        /* 入力がある時だけ表示 */
+        .input-field:not(:placeholder-shown) + .clr-btn { display: flex; }
 
         .controls {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 12px;
             margin-bottom: 15px;
         }
         .control-group { text-align: left; }
@@ -133,11 +142,13 @@
             border: 2px solid var(--accent);
             border-radius: 12px;
             padding: 12px;
+            padding-right: 35px;
             font-size: 1rem;
             color: var(--main);
             outline: none;
             -webkit-appearance: none;
             -webkit-text-fill-color: var(--main);
+            transition: border-color 0.2s;
         }
 
         #statusMessage {
@@ -218,18 +229,24 @@
     </header>
 
     <div class="input-group">
-        <textarea id="input" placeholder="Paste your lines here..."></textarea>
-        <button id="clear" class="clr-btn">×</button>
+        <textarea id="input" class="input-field" placeholder="Paste your lines here..."></textarea>
+        <button class="clr-btn" onclick="clearInput('input')">×</button>
     </div>
 
     <div class="controls">
         <div class="control-group">
             <label class="label">Prefix (Head)</label>
-            <input type="text" id="prefix" class="decorator-input" placeholder="e.g. • ">
+            <div style="position:relative">
+                <input type="text" id="prefix" class="decorator-input input-field" placeholder="e.g. • ">
+                <button class="clr-btn" onclick="clearInput('prefix')">×</button>
+            </div>
         </div>
         <div class="control-group">
             <label class="label">Suffix (Tail)</label>
-            <input type="text" id="suffix" class="decorator-input" placeholder="e.g. ,">
+            <div style="position:relative">
+                <input type="text" id="suffix" class="decorator-input input-field" placeholder="e.g. ,">
+                <button class="clr-btn" onclick="clearInput('suffix')">×</button>
+            </div>
         </div>
     </div>
 
@@ -263,8 +280,14 @@
     const suffixInput = document.getElementById('suffix');
     const decorateBtn = document.getElementById('decorateBtn');
     const statusMsg = document.getElementById('statusMessage');
-    const clearBtn = document.getElementById('clear');
     const modal = document.getElementById('modal');
+
+    function clearInput(id) {
+        const el = document.getElementById(id);
+        el.value = '';
+        statusMsg.style.opacity = '0';
+        el.focus();
+    }
 
     decorateBtn.addEventListener('click', () => {
         if (!input.value.trim()) return;
@@ -296,12 +319,6 @@
                 statusMsg.style.opacity = '0';
             }, 2000);
         });
-    });
-
-    clearBtn.addEventListener('click', () => {
-        input.value = '';
-        statusMsg.style.opacity = '0';
-        input.focus();
     });
 
     document.getElementById('homeBtn').onclick = () => modal.style.display = 'flex';
