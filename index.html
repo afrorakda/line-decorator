@@ -91,10 +91,7 @@
         }
         textarea:focus, .decorator-input:focus { border-color: var(--main); }
         
-        /* 透かし（Placeholder）のコントラスト固定 */
         ::placeholder { color: var(--placeholder); -webkit-text-fill-color: var(--placeholder); opacity: 1; }
-        :-ms-input-placeholder { color: var(--placeholder); }
-        ::-ms-input-placeholder { color: var(--placeholder); }
 
         .clr-btn {
             position: absolute;
@@ -115,10 +112,7 @@
             cursor: pointer;
             z-index: 5;
         }
-        /* Textarea用の位置調整 */
         textarea + .clr-btn { top: 27px; }
-        
-        /* 入力がある時だけ表示 */
         .input-field:not(:placeholder-shown) + .clr-btn { display: flex; }
 
         .controls {
@@ -229,7 +223,7 @@
     </header>
 
     <div class="input-group">
-        <textarea id="input" class="input-field" placeholder="Paste your lines here..."></textarea>
+        <textarea id="input" class="input-field" placeholder="Paste your lines here..." onclick="this.select()"></textarea>
         <button class="clr-btn" onclick="clearInput('input')">×</button>
     </div>
 
@@ -237,14 +231,14 @@
         <div class="control-group">
             <label class="label">Prefix (Head)</label>
             <div style="position:relative">
-                <input type="text" id="prefix" class="decorator-input input-field" placeholder="e.g. • ">
+                <input type="text" id="prefix" class="decorator-input input-field" placeholder="e.g. • " onclick="this.select()">
                 <button class="clr-btn" onclick="clearInput('prefix')">×</button>
             </div>
         </div>
         <div class="control-group">
             <label class="label">Suffix (Tail)</label>
             <div style="position:relative">
-                <input type="text" id="suffix" class="decorator-input input-field" placeholder="e.g. ,">
+                <input type="text" id="suffix" class="decorator-input input-field" placeholder="e.g. ," onclick="this.select()">
                 <button class="clr-btn" onclick="clearInput('suffix')">×</button>
             </div>
         </div>
